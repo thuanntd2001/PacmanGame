@@ -1,6 +1,7 @@
+
 import pygame as pygame
 import pygame
-import copy
+
 
 
 GREY = (150,150,150)
@@ -14,6 +15,7 @@ COCHU=KTI #kich thuoc dau cham
 KTNV=32
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 576
+DOLUI=10
 
 
 COLOR_WALL = (10,10,128)
@@ -25,16 +27,16 @@ FONT = pygame.font.Font(None, COCHU)
 
 # doi tuong square cung cap các pixel tren ban do co the tuỳ chỉnh màu sac va thay doi trang thai
 
-class Square(pygame.sprite.Sprite):
+class Square():
 
 
 	def __init__(self, x, y, KTI, style, khoangCachX=0,khoangCachY=0):
 
-		pygame.sprite.Sprite.__init__(self)
+
 		self.rect = pygame.Rect(x+khoangCachX, y+khoangCachY, KTI, KTI)
 		self.KTI=KTI
 		self.style=style
-		if style == 0:
+		if style == 0 or style == 3 or style==9:
 			self.color = COLOR_GROUND
 		elif style == 1:
 			self.color = COLOR_WALL
@@ -48,11 +50,19 @@ class Square(pygame.sprite.Sprite):
 
 		# Blit the rect.
 		pygame.draw.rect(screen, self.color, self.rect)
-		if self.active ==False and self.style==0:
-			self.printTT(screen,".")
+		if self.active ==False:
+			if self.style==0:
+				self.printTT(screen,".")
+			elif self.style==3: 
+				self.printTT(screen,"o")
+			elif self.style==9:
+				x,y=self.chuyenTT(DOLUI)
+				y+=DOLUI+KTI/6
+				pygame.draw.ellipse(screen,WHITE,[x,y,DOLUI*2,DOLUI*2])
 
 	def chuyenTT(self, dolui=0):
 		return self.rect.left+self.KTI/2-dolui,self.rect.top+self.KTI/2-COCHU/2
+
 
 	def printTT(self, screen, noiDung):
 		txt_surface = FONT.render(noiDung, True, MAUCHU)
@@ -81,7 +91,11 @@ class BanDo():
 		self.wallGroup=pygame.sprite.Group()
 		self.groundGroup=pygame.sprite.Group()
 
+		self.cc=0
+
 		self.banDo=self.sinhBD(matran)
+
+		
 
 	def chuyen(self,x,y,space=0):
 		return (x+space)*self.KTI,(y+space)*self.KTI
@@ -95,10 +109,8 @@ class BanDo():
 			for j in range(self.IPSR):
 				xij,yij=self.chuyen(i,j)
 				tmp=Square(yij,xij,self.KTI,matran[i][j]) #sua cho nay doi cho xij,yij
-				if matran[i][j]==0:
-					self.groundGroup.add(tmp)
-				else:
-					self.wallGroup.add(tmp)
+				if matran[i][j]!=1:
+					self.cc+=1
 				img.append(tmp)
 		return img	
 
@@ -109,13 +121,6 @@ class BanDo():
 				self.banDo[i].draw(screen)
 
 
-	def suaBD(self,matran):
-		if (len(matran)!=self.IPS) or (len(matran[0]!=self.IPSR)):
-			print("sai ma tran")
-		else:
-			for i in range(self.IPS):
-				for j in range(self.IPSR):
-					self.banDo[i][j].style=matran[i][j]
 
 def f2t1(IPSR,i,j):
 	return i*IPSR+j
@@ -128,13 +133,23 @@ def main():
 
 # 0 la dat, 1 la tuong
 	matrix1=[
-		[0,1,0,1,1,0,0],
-		[0,0,0,0,0,0,1],
-		[1,0,1,0,1,0,1],
-		[0,0,1,2,0,0,1],
-		[1,0,0,1,0,1,1],
-		[1,0,1,0,1,0,1],
-		[0,1,0,1,1,0,0],
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+		[1,0,9,1,0,0,3,0,0,0,1,0,0,0,3,0,0,1,9,0,1],
+		[1,0,1,1,0,1,0,1,1,0,1,0,1,1,0,1,0,1,1,0,1],
+		[1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1],
+		[1,1,0,1,0,1,1,0,1,3,0,3,1,0,1,1,0,1,0,1,1],
+		[0,1,3,0,3,0,1,0,0,0,1,0,0,3,1,0,3,0,0,1,0],
+		[0,0,0,1,0,1,1,0,1,1,1,1,1,0,1,1,0,1,0,0,0],
+		[1,1,1,1,0,0,0,3,0,0,3,0,0,3,0,0,0,1,1,1,1],
+		[1,0,0,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,0,0,1],
+		[1,1,0,0,3,1,3,0,1,9,3,9,1,0,3,1,0,0,3,1,1],
+		[0,1,0,1,0,1,1,0,1,1,1,1,1,0,1,1,0,1,0,1,0],
+		[3,0,3,1,0,0,0,3,0,0,0,0,0,3,0,0,0,1,3,0,3],
+		[0,1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1,0],
+		[0,0,3,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,3,0,0],
+		[1,1,1,1,9,1,1,1,1,0,1,0,1,1,1,1,9,1,1,1,1],
+        
+        
 	]
 
 	global SCREEN_WIDTH, SCREEN_HEIGHT 
@@ -160,7 +175,9 @@ def main():
 
 
 		map0.draw(screen)
-		map0.banDo[f2t1(map0.IPSR,0,0)].printTT(screen,"gg")
+		#
+
+				#map0.banDo[f2t1(map0.IPSR,i,j)].printTT(screen,str(i)+" "+str(j))
 
 
 		pygame.display.flip()
@@ -171,3 +188,4 @@ def main():
 if __name__ == '__main__':
 	main()
 	pygame.quit()
+
