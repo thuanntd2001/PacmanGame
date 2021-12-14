@@ -4,23 +4,27 @@ import pygame
 
 
 
+
 GREY = (150,150,150)
 WHITE = (255,255,255)
 BLACK=(0,0,0)
+YELLOW=(255,255,0)
+DARKBLUE=(10,10,128)
+GRAY=(128,128,128)
 pygame.init()
 CANH=1
-MAUCHU=(255,255,0)
+MAUCHU=YELLOW
 KTI=50 #kich thuoc cua 1 khoi, thay doi độ to nhỏ cua bản đồ
 COCHU=KTI #kich thuoc dau cham
-KTNV=32
+#KTNV=32
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 576
 DOLUI=10
 
 
-COLOR_WALL = (10,10,128)
+COLOR_WALL = DARKBLUE
 COLOR_GROUND = BLACK						
-COLOR_ACTIVE=(128,128,128)
+COLOR_ACTIVE=GRAY
 
 FONT = pygame.font.Font(None, COCHU)
 
@@ -30,17 +34,17 @@ FONT = pygame.font.Font(None, COCHU)
 class Square():
 
 
-	def __init__(self, x, y, KTI, style, khoangCachX=0,khoangCachY=0):
+	def __init__(self, x, y, KTI, style):
 
 
-		self.rect = pygame.Rect(x+khoangCachX, y+khoangCachY, KTI, KTI)
-		self.KTI=KTI
+		self.rect = pygame.Rect(x, y, KTI, KTI)#khai báo các khối 
+		self.KTI=KTI#độ to nhỏ của khối
 		self.style=style
-		if style == 0 or style == 3 or style==9:
+		if style == 0 or style == 3 or style==9:#ba style chính để ăn điểm
 			self.color = COLOR_GROUND
-		elif style == 1:
+		elif style == 1:#style của tường
 			self.color = COLOR_WALL
-		elif style == 2:
+		elif style == 2:#sytle khi đi qua sẽ active ô đó và sẽ khiến cho điểm point trên ô đó mất đi
 			self.color = COLOR_ACTIVE
 		self.active = False
 
@@ -50,7 +54,7 @@ class Square():
 
 		# Blit the rect.
 		pygame.draw.rect(screen, self.color, self.rect)
-		if self.active ==False:
+		if self.active ==False:#nếu ô đó chưa được active thì sẽ vẽ theo các style được thiết lập trước
 			if self.style==0:
 				self.printTT(screen,".")
 			elif self.style==3: 
@@ -73,8 +77,6 @@ class Square():
 		return self.rect.x-CANH<x<self.rect.x+self.KTI+CANH and self.rect.y-CANH<y<self.rect.y+self.KTI+CANH
 
 
-
-
 """
 	doi tuong ban do cung cap cac phuong thuc tao, sua, di chuyen den 1 toa do tren map và vẽ
 	chỉ co ban do hinh vuong dc su dung, ko the co ban do hinh chu nhat
@@ -88,19 +90,14 @@ class BanDo():
 		self.IPSR = len(matran[0]) #so cot
 		self.KTI=KTI # kich thuoc 1 o
 		
-		self.wallGroup=pygame.sprite.Group()
-		self.groundGroup=pygame.sprite.Group()
-
-		self.cc=0
+		self.end=0
 
 		self.banDo=self.sinhBD(matran)
 
 		
 
-	def chuyen(self,x,y,space=0):
-		return (x+space)*self.KTI,(y+space)*self.KTI
-
-
+	def chuyen(self,x,y):
+		return x*self.KTI,y*self.KTI
 
 
 	def sinhBD(self,matran):
@@ -110,10 +107,9 @@ class BanDo():
 				xij,yij=self.chuyen(i,j)
 				tmp=Square(yij,xij,self.KTI,matran[i][j]) #sua cho nay doi cho xij,yij
 				if matran[i][j]!=1:
-					self.cc+=1
+					self.end+=1
 				img.append(tmp)
 		return img	
-
 
 
 	def draw(self,screen):
@@ -121,11 +117,8 @@ class BanDo():
 				self.banDo[i].draw(screen)
 
 
-
 def f2t1(IPSR,i,j):
-	return i*IPSR+j
-
-
+    	return i*IPSR+j
 
 
 def main():
@@ -175,9 +168,10 @@ def main():
 
 
 		map0.draw(screen)
-		#
+		for i in range(map0.IPS):
+			for j in range(map0.IPSR):
 
-				#map0.banDo[f2t1(map0.IPSR,i,j)].printTT(screen,str(i)+" "+str(j))
+				map0.banDo[f2t1(map0.IPSR,i,j)].printTT(screen,str(i)+" "+str(j))
 
 
 		pygame.display.flip()
@@ -188,4 +182,3 @@ def main():
 if __name__ == '__main__':
 	main()
 	pygame.quit()
-

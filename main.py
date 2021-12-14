@@ -1,6 +1,6 @@
 import pygame
-import testv02 as game
-import testv04 as level2
+import game as game
+
 
 screen_width=700
 
@@ -46,7 +46,7 @@ def main():
     pygame.display.set_caption("Game Pacman")
     clock=pygame.time.Clock()
     #clock=pygame.time.Clock()
-    bg=pygame.image.load('background.jpg').convert()
+    bg=pygame.image.load('background/background.jpg').convert()
 
     MENU=Menu(('Level','Start','Exit'))
 
