@@ -8,7 +8,7 @@ from Char import getPosB,getCoo,getPosB,NhanVat
 
 class Slime(NhanVat):
 
-	def __init__(self,img, i, j, bando,speed=5):
+	def __init__(self,img, i, j, bando,speed=4):
 		NhanVat.__init__(self,i, j, bando)
 		self.image=pygame.image.load(img).convert()
 		self.image.set_colorkey(BLACK)

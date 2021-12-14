@@ -71,7 +71,7 @@ def main():
 
 	tupSlime=(slime0,slime1,slime2,slime3,slime4,slime5,slime6)
 	
-	pacman=Pacman(9,10, map0,15)
+	pacman=Pacman(9,10, map0,5)
 
 	done = False
 
